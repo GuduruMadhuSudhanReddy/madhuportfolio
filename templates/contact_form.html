@@ -1,0 +1,138 @@
+{% extends 'index.html' %}
+
+{% block content %}
+  <!-- Contact Section -->
+  <section id="contact" class="contact section">
+  
+    <!-- Section Title -->
+    <div class="container section-title" data-aos="fade-up">
+      <h2>Contact</h2>
+      <p>please feel free to contact me</p>
+    </div><!-- End Section Title -->
+  
+    <div class="container" data-aos="fade-up" data-aos-delay="100">
+      <div class="row gy-4">
+  
+        <!-- Contact Info -->
+        <div class="col-lg-5">
+          <div class="info-wrap">
+            <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="200">
+              <i class="bi bi-geo-alt flex-shrink-0"></i>
+              <div>
+                <h3>Address</h3>
+                <p> Hyderabad, Kukatpally</p>
+              </div>
+            </div><!-- End Info Item -->
+  
+            <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="300">
+              <i class="bi bi-telephone flex-shrink-0"></i>
+              <div>
+                <h3>Call Us</h3>
+                <p>+91 6309195703</p>
+              </div>
+            </div><!-- End Info Item -->
+  
+            <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="400">
+              <i class="bi bi-envelope flex-shrink-0"></i>
+              <div>
+                <h3>Email Us</h3>
+                <p>madhusudhan850062@gmail.com</p>
+              </div>
+            </div><!-- End Info Item -->
+  
+            <iframe src="https://www.google.com/maps/embed?pb=..." frameborder="0" style="border:0; width: 100%; height: 270px;" allowfullscreen="" loading="lazy"></iframe>
+          </div>
+        </div>
+  
+        <!-- Contact Form -->
+      <!-- In your template -->
+<form id="contactForm" action="{% url 'contact' %}" method="post" class="php-email-form" onsubmit="submitForm(event)">
+  {% csrf_token %}
+  <div class="row gy-4">
+      <div class="col-md-6">
+          <label for="name-field" class="pb-2">Your Name</label>
+          <input type="text" name="name" id="name-field" class="form-control" required>
+      </div>
+
+      <div class="col-md-6">
+          <label for="email-field" class="pb-2">Your Email</label>
+          <input type="email" class="form-control" name="email" id="email-field" required>
+      </div>
+
+      <div class="col-md-12">
+          <label for="subject-field" class="pb-2">Subject</label>
+          <input type="text" class="form-control" name="subject" id="subject-field" required>
+      </div>
+
+      <div class="col-md-12">
+          <label for="message-field" class="pb-2">Message</label>
+          <textarea class="form-control" name="message" rows="10" id="message-field" required></textarea>
+      </div>
+
+      <div class="col-md-12 text-center">
+          <div class="loading" style="display: none;">Loading...</div>
+          <div class="error-message" style="display: none; color: red;"></div>
+          <div class="sent-message" style="display: none; color: green;">Your message has been sent. Thank you!</div>
+
+          <button type="submit">Send Message</button>
+      </div>
+  </div>
+</form>
+
+  
+      </div>
+    </div>
+  </section><!-- End Contact Section -->
+{% endblock %}
+
+<!-- JavaScript for AJAX -->
+<script>
+  function submitForm(event) {
+    event.preventDefault(); // Prevent default form submission
+    
+    // Show loading message
+    document.querySelector('.loading').style.display = 'block';
+    
+    // Hide any error or success messages
+    document.querySelector('.error-message').style.display = 'none';
+    document.querySelector('.sent-message').style.display = 'none';
+    
+    // Collect form data
+    const form = document.getElementById('contactForm');
+    const formData = new FormData(form);
+    
+    // Submit form via fetch API (AJAX)
+    fetch("{% url 'contact' %}", {  // Use Django's URL tag to get the correct URL
+      method: 'POST',
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',  // Make sure this is an AJAX request
+      },
+      body: formData,
+    })
+      .then((response) => response.json()) // Parse the JSON response
+      .then((data) => {
+        if (data.ok) {
+          document.querySelector('.loading').style.display = 'none';
+          document.querySelector('.sent-message').style.display = 'block';
+          
+          // Optionally, hide the form after submission
+          document.getElementById('contactForm').style.display = 'none';
+          
+          // Redirect to thank you page if provided
+          if (data.next) {
+            window.location.href = data.next;
+          }
+        } else {
+          document.querySelector('.loading').style.display = 'none';
+          document.querySelector('.error-message').textContent = 'There was an error. Please try again.';
+          document.querySelector('.error-message').style.display = 'block';
+        }
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        document.querySelector('.loading').style.display = 'none';
+        document.querySelector('.error-message').textContent = 'Something went wrong. Please try again.';
+        document.querySelector('.error-message').style.display = 'block';
+      });
+  }
+</script>
